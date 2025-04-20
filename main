@@ -1,0 +1,76 @@
+ingredients = {
+    "milk": 500,  # mL
+    "water": 10000,  # mL
+    "coffee": 500,  # grams
+    "money": 0  #$
+}
+
+coffee_recipes = {
+    "espresso": {"water": 50, "milk": 0, "coffee": 18, "price": 1.25},
+    "latte": {"water": 200, "milk": 150, "coffee": 24, "price": 1.00},
+    "cappuccino": {"water": 200, "milk": 100, "coffee": 24, "price": 2.50},
+}
+
+
+def print_report(left_ingredients):
+    milk_left = left_ingredients["milk"]
+    water_left = left_ingredients["water"]
+    coffe_left = left_ingredients["coffee"]
+    money_in_bank = left_ingredients["money"]
+    return (f"milk_left: {milk_left} ml, water_left: {water_left} ml, coffe_left: {coffe_left} "
+            f"gms and money_in_bank= {money_in_bank} $")
+
+
+def is_resource_sufficient(choice_of_drink):
+    for item in coffee_recipes[choice_of_drink]:
+        if item != "price" and coffee_recipes[choice_of_drink][item] > ingredients[item]:
+            print(f"Sorry, not enough {item}.")
+            return False
+    return True
+
+
+def in_transiction_successful(money_received, choice_of_drink):
+    drink_cost = coffee_recipes[choice_of_drink]["price"]
+    if money_received >= drink_cost:
+        change = round(money_received - drink_cost, 2)
+        ingredients["money"] += drink_cost
+        return True
+    else:
+        print("sorry not enough money. Money refunded ")
+        return False
+
+
+def process_coins():
+    print("please insert coins")
+    total = int(input("how many quarters: ")) * 0.25
+    total += int(input("how many dimes: ")) * 0.1
+    total += int(input("how many nickels: ")) * 0.05
+    total += int(input("how many pennies: ")) * 0.01
+    return total
+
+
+def make_coffe(choice_of_drink):
+    for item in coffee_recipes[choice_of_drink]:
+        if item != "price":
+            ingredients[item] -= coffee_recipes[choice_of_drink][item]
+    print(f"Here is your {choice_of_drink} ☕. Enjoy!")
+
+
+def coffe_machine():
+    print("welcome to coffe machine")
+    while True:
+        choice = input("please select your input\n").lower()
+        if choice == "report":
+            print(print_report(left_ingredients=ingredients))
+        elif choice == "off":
+            print("shutting off: BYE BYE")
+            return
+        elif choice in coffee_recipes and is_resource_sufficient(choice_of_drink=choice):
+            money_received = process_coins()
+            if in_transiction_successful(money_received=money_received, choice_of_drink=choice):
+                make_coffe(choice_of_drink=choice)
+        else:
+            print("Invalid input. Please try again.")
+
+
+coffe_machine()
